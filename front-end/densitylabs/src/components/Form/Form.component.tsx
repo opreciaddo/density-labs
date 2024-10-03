@@ -1,5 +1,7 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import axios from 'axios';
+// Contexts
+import { DataContext } from '../../context/data.context';
 
 
 // Component-props typing
@@ -29,6 +31,9 @@ const Form: FC<FormProps> = () => {
   const [formFields, setFormFields] = useState(defaultFormField);
   const { email, comment, emailTouched } = formFields;
 
+  // Context to update data on DOM
+  const { setUpdateData } = useContext(DataContext);
+
   /** Handles the submit of a form.
    * @param event - React.ChangeEvent<HTMLFormElement>
    */
@@ -41,6 +46,8 @@ const Form: FC<FormProps> = () => {
       .catch(error => console.log(error));
 
     setFormFields(defaultFormField);
+
+    setUpdateData(true);
   };
 
   /** Gets the values of 'input' and 'textarea' elements, and updates 'formFields' state.

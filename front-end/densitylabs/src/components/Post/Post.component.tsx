@@ -1,7 +1,9 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import axios from 'axios';
 // Interfaces
 import { PostFields } from '../PostsCard/PostsCard.component';
+// Contexts
+import { DataContext } from '../../context/data.context';
 
 
 // Component-props typing
@@ -18,24 +20,29 @@ const Post: FC<PostProps> = ({ postFields }) => {
   const [editablePost, setEditablePost] = useState<boolean>(false);
   const [editPostFields, setEditPostFields] = useState<PostFields>({email, comment});
 
+  // Context to update data on DOM
+  const { setUpdateData } = useContext(DataContext);
+
   /** Deletes a post in database postgreSQL. */
   const deletePost = (): void => {
 
     axios.delete(`http://localhost:4000/post/${id}`)
       .then(res => console.log(res))
       .catch(error => console.log(error));
+
+    setUpdateData(true);
   }
 
   /** Edits a post in database postgreSQL. */
   const updatePost = (): void => {
-    
-    console.log(editPostFields);
 
     axios.put(`http://localhost:4000/post/${id}`, { email: editPostFields.email, comment: editPostFields.comment })
       .then(res => console.log(res))
       .catch(error => console.log(error));
 
     setEditablePost(false);
+    
+    setUpdateData(true);
   }
 
   /** Gets the values of 'input' and 'textarea' elements, and updates 'editPostFields' state.

@@ -1,10 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 // Utils
 import { getData } from '../../utils/data.utils';
 // Components
 import Form from '../Form/Form.component';
 import Post from '../Post/Post.component';
+// Contexts
+import { DataContext } from '../../context/data.context';
 
 
 /** Fields of a post.
@@ -27,6 +29,8 @@ const PostsCard: FC<PostsCardProps> = () => {
 
   const [posts, setPosts] = useState<PostFields[]>([]);
 
+  const { updateData, setUpdateData } = useContext(DataContext);
+
   useEffect(() => {
 
     /** Fetches the posts from database postgreSQL. */
@@ -34,11 +38,13 @@ const PostsCard: FC<PostsCardProps> = () => {
 
       const postsData = await getData<AxiosResponse <PostFields[]>>('http://localhost:4000/posts');
       setPosts(postsData.data);
+      setUpdateData(false);
     };
 
     fetchPosts();
 
-  }, [posts]);
+  }, [updateData]);
+
 
   return (
     <div className='postcard-component w-50 mb-4'>
